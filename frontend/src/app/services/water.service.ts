@@ -59,5 +59,19 @@ export class WaterService {
     const today = new Date().toISOString().split('T')[0];
     return this.http.get<number>(`${this.apiUrl}/total/${today}`);
   }
+
+  getTodayIntake(): Observable<{ totalAmount: number; intakes: WaterIntake[] }> {
+    return this.http.get<any>(`${this.apiUrl}/today`).pipe(
+      map(data => ({
+        totalAmount: data.totalAmount || 0,
+        intakes: (data.intakes || []).map((intake: any) => ({
+          id: intake.id,
+          amount: intake.amountMl,
+          date: intake.intakeTime || intake.createdAt,
+          time: intake.intakeTime || intake.createdAt
+        }))
+      }))
+    );
+  }
 }
 

@@ -46,6 +46,56 @@ public class MealController {
         return ResponseEntity.ok(mealService.getMealById(id));
     }
 
+    // OPÉRATIONS COMPLEXES AJOUTÉES
+
+    @GetMapping("/statistics/user/{userId}")
+    public ResponseEntity<?> getUserMealStatistics(@PathVariable Long userId) {
+        return ResponseEntity.ok(mealService.getUserMealStatistics(userId));
+    }
+
+    @GetMapping("/statistics/user/{userId}/period")
+    public ResponseEntity<?> getUserMealStatisticsByPeriod(
+            @PathVariable Long userId,
+            @RequestParam LocalDate startDate,
+            @RequestParam LocalDate endDate) {
+        return ResponseEntity.ok(mealService.getUserMealStatisticsByPeriod(userId, startDate, endDate));
+    }
+
+    @GetMapping("/calories/user/{userId}/daily")
+    public ResponseEntity<?> getDailyCalories(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "7") int days) {
+        return ResponseEntity.ok(mealService.getDailyCaloriesForLastDays(userId, days));
+    }
+
+    @GetMapping("/macros/user/{userId}/average")
+    public ResponseEntity<?> getAverageMacros(@PathVariable Long userId) {
+        return ResponseEntity.ok(mealService.getAverageMacros(userId));
+    }
+
+    @GetMapping("/frequent/user/{userId}")
+    public ResponseEntity<?> getMostFrequentMealTypes(@PathVariable Long userId) {
+        return ResponseEntity.ok(mealService.getMostFrequentMealTypes(userId));
+    }
+
+    @GetMapping("/today")
+    public ResponseEntity<List<Meal>> getTodayMeals() {
+        // Pour démo, utiliser userId = 1
+        return ResponseEntity.ok(mealService.getMealsByUserAndDate(1L, LocalDate.now()));
+    }
+
+    @GetMapping("/comparison/user/{userId}")
+    public ResponseEntity<?> getWeeklyComparison(@PathVariable Long userId) {
+        return ResponseEntity.ok(mealService.getWeeklyComparison(userId));
+    }
+
+    @GetMapping("/trends/user/{userId}")
+    public ResponseEntity<?> getNutritionTrends(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "30") int days) {
+        return ResponseEntity.ok(mealService.getNutritionTrends(userId, days));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Meal> updateMeal(
             @PathVariable Long id,

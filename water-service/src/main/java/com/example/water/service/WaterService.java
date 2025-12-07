@@ -115,5 +115,251 @@ public class WaterService {
         }
         waterIntakeRepository.delete(intake);
     }
+
+    // OPÉRATIONS COMPLEXES AVEC POSTGRESQL
+
+    public Object getWaterStatistics(Long userId) {
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserId(userId);
+        WaterGoal goal = getUserGoal(userId);
+
+        int totalIntakes = intakes.size();
+        int totalMl = intakes.stream().mapToInt(WaterIntake::getAmountMl).sum();
+        double avgPerDay = totalMl / (double) (intakes.isEmpty() ? 1 :
+            java.time.temporal.ChronoUnit.DAYS.between(
+                intakes.stream().map(WaterIntake::getIntakeTime).min(LocalDateTime::compareTo).orElse(LocalDateTime.now()).toLocalDate(),
+                LocalDate.now()
+            ) + 1);
+
+        return new WaterStatistics(
+            totalIntakes,
+            totalMl,
+            avgPerDay,
+            goal.getDailyGoalMl(),
+            (avgPerDay / goal.getDailyGoalMl()) * 100
+        );
+    }
+
+    public Object getWeeklyStatistics(Long userId) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(7);
+
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId,
+            startDate.atStartOfDay(),
+            endDate.atTime(23, 59, 59)
+        );
+
+        WaterGoal goal = getUserGoal(userId);
+        int totalMl = intakes.stream().mapToInt(WaterIntake::getAmountMl).sum();
+        double avgPerDay = totalMl / 7.0;
+
+        return new WeeklyStatistics(
+            intakes.size(),
+            totalMl,
+            avgPerDay,
+            goal.getDailyGoalMl(),
+            startDate,
+            endDate
+        );
+    }
+
+    public Object getMonthlyStatistics(Long userId) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(30);
+
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId,
+            startDate.atStartOfDay(),
+            endDate.atTime(23, 59, 59)
+        );
+
+        int totalMl = intakes.stream().mapToInt(WaterIntake::getAmountMl).sum();
+        WaterGoal goal = getUserGoal(userId);
+
+        return new MonthlyStatistics(
+            intakes.size(),
+            totalMl,
+            totalMl / 30.0,
+            goal.getDailyGoalMl(),
+            startDate,
+            endDate
+        );
+    }
+
+    public Object getHydrationTrends(Long userId, int days) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days - 1);
+
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId,
+            startDate.atStartOfDay(),
+            endDate.atTime(23, 59, 59)
+        );
+
+        var dailyData = new java.util.ArrayList<DailyHydration>();
+
+        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
+            final LocalDate currentDate = date;
+            int dayTotal = intakes.stream()
+                .filter(i -> i.getIntakeTime().toLocalDate().equals(currentDate))
+                .mapToInt(WaterIntake::getAmountMl)
+                .sum();
+
+            dailyData.add(new DailyHydration(currentDate, dayTotal));
+        }
+
+        return dailyData;
+    }
+
+    public Object getGoalCompletionRate(Long userId) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(30);
+        WaterGoal goal = getUserGoal(userId);
+
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId,
+            startDate.atStartOfDay(),
+            endDate.atTime(23, 59, 59)
+        );
+
+        var dailyTotals = intakes.stream()
+            .collect(java.util.stream.Collectors.groupingBy(
+                i -> i.getIntakeTime().toLocalDate(),
+                java.util.stream.Collectors.summingInt(WaterIntake::getAmountMl)
+            ));
+
+        long daysMetGoal = dailyTotals.values().stream()
+            .filter(total -> total >= goal.getDailyGoalMl())
+            .count();
+
+        return new GoalCompletion(
+            (int) daysMetGoal,
+            30,
+            (daysMetGoal / 30.0) * 100
+        );
+    }
+
+    public Object getHourlyDistribution(Long userId) {
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserId(userId);
+
+        return intakes.stream()
+            .collect(java.util.stream.Collectors.groupingBy(
+                i -> i.getIntakeTime().getHour(),
+                java.util.stream.Collectors.summingInt(WaterIntake::getAmountMl)
+            ))
+            .entrySet().stream()
+            .sorted(java.util.Map.Entry.comparingByKey())
+            .collect(java.util.stream.Collectors.toMap(
+                e -> e.getKey() + ":00",
+                java.util.Map.Entry::getValue,
+                (a, b) -> a,
+                java.util.LinkedHashMap::new
+            ));
+    }
+
+    public Object getWeeklyComparison(Long userId) {
+        LocalDate now = LocalDate.now();
+        LocalDate thisWeekStart = now.minusDays(7);
+        LocalDate lastWeekStart = now.minusDays(14);
+
+        List<WaterIntake> thisWeek = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId, thisWeekStart.atStartOfDay(), now.atTime(23, 59, 59)
+        );
+
+        List<WaterIntake> lastWeek = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId, lastWeekStart.atStartOfDay(), thisWeekStart.minusDays(1).atTime(23, 59, 59)
+        );
+
+        int thisWeekTotal = thisWeek.stream().mapToInt(WaterIntake::getAmountMl).sum();
+        int lastWeekTotal = lastWeek.stream().mapToInt(WaterIntake::getAmountMl).sum();
+        double change = lastWeekTotal > 0 ? ((thisWeekTotal - lastWeekTotal) / (double) lastWeekTotal) * 100 : 0;
+
+        return new WeeklyComparison(
+            thisWeekTotal,
+            lastWeekTotal,
+            change,
+            thisWeek.size(),
+            lastWeek.size()
+        );
+    }
+
+    public Object getHydrationStreaks(Long userId) {
+        WaterGoal goal = getUserGoal(userId);
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(90);
+
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId,
+            startDate.atStartOfDay(),
+            endDate.atTime(23, 59, 59)
+        );
+
+        var dailyTotals = intakes.stream()
+            .collect(java.util.stream.Collectors.groupingBy(
+                i -> i.getIntakeTime().toLocalDate(),
+                java.util.stream.Collectors.summingInt(WaterIntake::getAmountMl)
+            ));
+
+        int currentStreak = 0;
+        int longestStreak = 0;
+        int tempStreak = 0;
+
+        for (LocalDate date = endDate; !date.isBefore(startDate); date = date.minusDays(1)) {
+            if (dailyTotals.getOrDefault(date, 0) >= goal.getDailyGoalMl()) {
+                tempStreak++;
+                if (date.equals(endDate) || currentStreak > 0) {
+                    currentStreak = tempStreak;
+                }
+                longestStreak = Math.max(longestStreak, tempStreak);
+            } else {
+                tempStreak = 0;
+            }
+        }
+
+        return new HydrationStreaks(currentStreak, longestStreak);
+    }
+
+    public Object getBestHydrationDays(Long userId, int days) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(days - 1);
+
+        List<WaterIntake> intakes = waterIntakeRepository.findByUserIdAndIntakeTimeBetween(
+            userId,
+            startDate.atStartOfDay(),
+            endDate.atTime(23, 59, 59)
+        );
+
+        return intakes.stream()
+            .collect(java.util.stream.Collectors.groupingBy(
+                i -> i.getIntakeTime().toLocalDate(),
+                java.util.stream.Collectors.summingInt(WaterIntake::getAmountMl)
+            ))
+            .entrySet().stream()
+            .sorted((a, b) -> Integer.compare(b.getValue(), a.getValue()))
+            .limit(10)
+            .map(e -> new BestDay(e.getKey(), e.getValue()))
+            .toList();
+    }
+
+    // Records pour les réponses
+    record WaterStatistics(int totalIntakes, int totalMl, double avgPerDay,
+                          int dailyGoal, double goalCompletionPercent) {}
+
+    record WeeklyStatistics(int totalIntakes, int totalMl, double avgPerDay,
+                           int dailyGoal, LocalDate startDate, LocalDate endDate) {}
+
+    record MonthlyStatistics(int totalIntakes, int totalMl, double avgPerDay,
+                            int dailyGoal, LocalDate startDate, LocalDate endDate) {}
+
+    record DailyHydration(LocalDate date, int totalMl) {}
+
+    record GoalCompletion(int daysMetGoal, int totalDays, double completionRate) {}
+
+    record WeeklyComparison(int thisWeekTotal, int lastWeekTotal, double percentChange,
+                           int thisWeekIntakes, int lastWeekIntakes) {}
+
+    record HydrationStreaks(int currentStreak, int longestStreak) {}
+
+    record BestDay(LocalDate date, int totalMl) {}
 }
 

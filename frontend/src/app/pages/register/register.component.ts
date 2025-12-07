@@ -342,7 +342,20 @@ export class RegisterComponent {
       },
       error: (error) => {
         console.error('Registration error:', error);
-        this.errorMessage = error.error?.message || 'Une erreur est survenue lors de l\'inscription';
+        console.log('Error details:', JSON.stringify(error, null, 2));
+
+        // Afficher les erreurs de validation si disponibles
+        if (error.error?.validationErrors) {
+          const validationErrors = Object.values(error.error.validationErrors).join(', ');
+          this.errorMessage = validationErrors;
+        } else if (error.error?.message) {
+          this.errorMessage = error.error.message;
+        } else if (error.message) {
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = 'Une erreur est survenue lors de l\'inscription';
+        }
+
         this.loading = false;
       }
     });

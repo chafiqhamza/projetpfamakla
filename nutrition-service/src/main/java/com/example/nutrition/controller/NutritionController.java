@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/nutrition")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*", allowCredentials = "true")
 public class NutritionController {
 
     private final NutritionAnalysisService nutritionAnalysisService;

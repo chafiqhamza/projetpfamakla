@@ -21,6 +21,10 @@ export interface Meal {
   mealTime: string;
   foods: Food[];
   totalCalories?: number;
+  calories?: number;  // Alias pour totalCalories
+  protein?: number;
+  carbs?: number;
+  fats?: number;
   date?: string;
 }
 

@@ -248,7 +248,20 @@ export class LoginComponent {
       },
       error: (error) => {
         console.error('Login error:', error);
-        this.errorMessage = 'Nom d\'utilisateur ou mot de passe incorrect';
+        console.log('Error details:', JSON.stringify(error, null, 2));
+
+        // Afficher les erreurs de validation si disponibles
+        if (error.error?.validationErrors) {
+          const validationErrors = Object.values(error.error.validationErrors).join(', ');
+          this.errorMessage = validationErrors;
+        } else if (error.error?.message) {
+          this.errorMessage = error.error.message;
+        } else if (error.status === 401 || error.status === 403) {
+          this.errorMessage = 'Nom d\'utilisateur ou mot de passe incorrect';
+        } else {
+          this.errorMessage = 'Une erreur est survenue lors de la connexion';
+        }
+
         this.loading = false;
       }
     });

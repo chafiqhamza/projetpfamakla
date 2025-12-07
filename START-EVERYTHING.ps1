@@ -53,12 +53,16 @@ function Start-Service {
         [string]$Name,
         [string]$Path,
         [int]$Port,
-        [string]$HealthUrl
+        [string]$HealthUrl,
+        [string]$SpringProfile = ""
     )
 
     Write-Host ""
     Write-Host "========================================" -ForegroundColor Yellow
     Write-Host "Demarrage: $Name (Port $Port)" -ForegroundColor Yellow
+    if ($SpringProfile) {
+        Write-Host "Profil Spring: $SpringProfile" -ForegroundColor Cyan
+    }
     Write-Host "========================================" -ForegroundColor Yellow
 
     # Verifier si le port est deja utilise
@@ -81,7 +85,12 @@ function Start-Service {
     $servicePath = Join-Path $projectRoot $Path
     Write-Host "Lancement de $Name..." -ForegroundColor Cyan
 
-    $command = "cd '$servicePath'; Write-Host '=== $Name ===' -ForegroundColor Cyan; Write-Host 'Port: $Port' -ForegroundColor White; Write-Host ''; ..\mvnw.cmd spring-boot:run"
+    # Construire la commande avec profil Spring si specifie
+    if ($SpringProfile) {
+        $command = "cd '$servicePath'; Write-Host '=== $Name ===' -ForegroundColor Cyan; Write-Host 'Port: $Port' -ForegroundColor White; Write-Host 'Profile: $SpringProfile' -ForegroundColor Green; Write-Host ''; ..\mvnw.cmd spring-boot:run '-Dspring-boot.run.profiles=$SpringProfile'"
+    } else {
+        $command = "cd '$servicePath'; Write-Host '=== $Name ===' -ForegroundColor Cyan; Write-Host 'Port: $Port' -ForegroundColor White; Write-Host ''; ..\mvnw.cmd spring-boot:run"
+    }
 
     $process = Start-Process powershell -ArgumentList "-NoExit", "-Command", $command -PassThru
 
@@ -162,12 +171,13 @@ if (-not $started) {
 }
 Start-Sleep -Seconds 5
 
-# 4. AUTH SERVICE
+# 4. AUTH SERVICE (avec PostgreSQL)
 Write-Host ""
 Write-Host "Voulez-vous demarrer Auth Service? (O/N)" -ForegroundColor Yellow
 $response = Read-Host
 if ($response -eq 'O' -or $response -eq 'o') {
-    Start-Service -Name "Auth Service" -Path "auth-service" -Port 8081 -HealthUrl "http://localhost:8081/actuator/health"
+    Write-Host "Demarrage avec profil PostgreSQL..." -ForegroundColor Cyan
+    Start-Service -Name "Auth Service" -Path "auth-service" -Port 8081 -HealthUrl "http://localhost:8081/actuator/health" -SpringProfile "postgres"
     Start-Sleep -Seconds 3
 }
 

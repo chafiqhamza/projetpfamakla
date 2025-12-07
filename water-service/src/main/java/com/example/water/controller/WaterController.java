@@ -114,5 +114,69 @@ public class WaterController {
     public ResponseEntity<String> health() {
         return ResponseEntity.ok("Water Service is running");
     }
+
+    // OPÉRATIONS COMPLEXES AJOUTÉES
+
+    @GetMapping("/statistics/user/{userId}")
+    public ResponseEntity<?> getWaterStatistics(@PathVariable Long userId) {
+        return ResponseEntity.ok(waterService.getWaterStatistics(userId));
+    }
+
+    @GetMapping("/statistics/weekly/{userId}")
+    public ResponseEntity<?> getWeeklyStatistics(@PathVariable Long userId) {
+        return ResponseEntity.ok(waterService.getWeeklyStatistics(userId));
+    }
+
+    @GetMapping("/statistics/monthly/{userId}")
+    public ResponseEntity<?> getMonthlyStatistics(@PathVariable Long userId) {
+        return ResponseEntity.ok(waterService.getMonthlyStatistics(userId));
+    }
+
+    @GetMapping("/trends/{userId}")
+    public ResponseEntity<?> getHydrationTrends(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "7") int days) {
+        return ResponseEntity.ok(waterService.getHydrationTrends(userId, days));
+    }
+
+    @GetMapping("/completion-rate/{userId}")
+    public ResponseEntity<?> getGoalCompletionRate(@PathVariable Long userId) {
+        return ResponseEntity.ok(waterService.getGoalCompletionRate(userId));
+    }
+
+    @GetMapping("/hourly-distribution/{userId}")
+    public ResponseEntity<?> getHourlyDistribution(@PathVariable Long userId) {
+        return ResponseEntity.ok(waterService.getHourlyDistribution(userId));
+    }
+
+    @GetMapping("/comparison/{userId}")
+    public ResponseEntity<?> getWeeklyComparison(@PathVariable Long userId) {
+        return ResponseEntity.ok(waterService.getWeeklyComparison(userId));
+    }
+
+    @GetMapping("/today")
+    public ResponseEntity<?> getTodayIntake() {
+        // Pour démo, utiliser userId = 1
+        WaterSummaryResponse summary = waterService.getDailySummary(1L, LocalDate.now());
+        List<WaterIntake> intakes = waterService.getUserWaterIntakeForDate(1L, LocalDate.now());
+        return ResponseEntity.ok(java.util.Map.of(
+            "totalAmount", summary.getTotalMl(),
+            "goal", summary.getGoalMl(),
+            "percentage", summary.getPercentageAchieved(),
+            "intakes", intakes
+        ));
+    }
+
+    @GetMapping("/streaks/{userId}")
+    public ResponseEntity<?> getHydrationStreaks(@PathVariable Long userId) {
+        return ResponseEntity.ok(waterService.getHydrationStreaks(userId));
+    }
+
+    @GetMapping("/best-days/{userId}")
+    public ResponseEntity<?> getBestHydrationDays(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "30") int days) {
+        return ResponseEntity.ok(waterService.getBestHydrationDays(userId, days));
+    }
 }
 

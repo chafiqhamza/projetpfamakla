@@ -22,12 +22,17 @@ public class GlobalExceptionHandler {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
+            // Log pour debug
+            System.out.println("Validation error - Field: " + fieldName + ", Message: " + errorMessage);
         });
+
+        String mainMessage = errors.isEmpty() ? "Données invalides" :
+                           String.join(", ", errors.values());
 
         ErrorResponse errorResponse = new ErrorResponse(
             HttpStatus.BAD_REQUEST.value(),
             "Erreur de validation",
-            errors.values().stream().findFirst().orElse("Données invalides"),
+            mainMessage,
             LocalDateTime.now(),
             errors
         );

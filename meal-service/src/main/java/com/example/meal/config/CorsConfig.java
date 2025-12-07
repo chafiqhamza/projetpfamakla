@@ -14,13 +14,8 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOrigins(
-                        "http://localhost:4200",
-                        "http://localhost:4201",
-                        "http://localhost:3000",
-                        "http://localhost:8080"
-                    )
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
+                    .allowedOriginPatterns("*")  // Utiliser allowedOriginPatterns pour compatibilité avec allowCredentials
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD")
                     .allowedHeaders("*")
                     .allowCredentials(true)
                     .maxAge(3600);

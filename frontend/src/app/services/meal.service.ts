@@ -43,6 +43,19 @@ export class MealService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  getTodayMeals(): Observable<Meal[]> {
+    const today = new Date().toISOString().split('T')[0];
+    return this.http.get<any[]>(`${this.apiUrl}/today`).pipe(
+      map(meals => meals.map(m => ({
+        ...this.mapBackendToFrontend(m),
+        calories: m.totalCalories || m.calories || 0,
+        protein: m.totalProtein || m.protein || 0,
+        carbs: m.totalCarbs || m.carbs || 0,
+        fats: m.totalFat || m.fats || 0
+      })))
+    );
+  }
+
   private mapFrontendToBackend(meal: Meal): any {
     return {
       authUserId: 1, // Default user ID for demo
@@ -59,7 +72,11 @@ export class MealService {
       description: '',
       mealTime: backendMeal.mealType || '',
       foods: [], // Would need to fetch foods separately
-      totalCalories: backendMeal.totalCalories,
+      totalCalories: backendMeal.totalCalories || 0,
+      calories: backendMeal.totalCalories || 0,
+      protein: backendMeal.totalProtein || 0,
+      carbs: backendMeal.totalCarbs || 0,
+      fats: backendMeal.totalFat || 0,
       date: backendMeal.mealDate
     };
   }

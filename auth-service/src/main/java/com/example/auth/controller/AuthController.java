@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // Pour permettre l'accès depuis n'importe quelle origine
+// CORS configuré globalement dans SecurityConfig - pas besoin d'annotation ici
 public class AuthController {
 
     private final AuthService authService;
@@ -27,12 +27,34 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+        System.out.println("=== REGISTER REQUEST RECEIVED ===");
+        System.out.println("Username: " + request.getUsername());
+        System.out.println("Email: " + request.getEmail());
+        System.out.println("FirstName: " + request.getFirstName());
+        System.out.println("LastName: " + request.getLastName());
+        try {
+            AuthResponse response = authService.register(request);
+            System.out.println("=== REGISTER SUCCESS ===");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("=== REGISTER ERROR: " + e.getMessage() + " ===");
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+        System.out.println("=== LOGIN REQUEST RECEIVED ===");
+        System.out.println("Username: " + request.getUsername());
+        try {
+            AuthResponse response = authService.login(request);
+            System.out.println("=== LOGIN SUCCESS ===");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("=== LOGIN ERROR: " + e.getMessage() + " ===");
+            throw e;
+        }
     }
 
     @GetMapping("/validate")

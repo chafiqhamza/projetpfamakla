@@ -3,7 +3,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
+    loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
   {
     path: 'login',
@@ -22,12 +26,24 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/water/water.component').then(m => m.WaterComponent)
   },
   {
+    path: 'foods',
+    loadComponent: () => import('./pages/foods/foods.component').then(m => m.FoodsComponent)
+  },
+  {
+    path: 'analysis',
+    loadComponent: () => import('./pages/analysis/analysis.component').then(m => m.AnalysisComponent)
+  },
+  {
     path: 'diagnostic',
     loadComponent: () => import('./pages/diagnostic/diagnostic.component').then(m => m.DiagnosticComponent)
   },
   {
+    path: 'home',
+    loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
+  },
+  {
     path: '**',
-    redirectTo: ''
+    redirectTo: 'dashboard'
   }
 ];
 
