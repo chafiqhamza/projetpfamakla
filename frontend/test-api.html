@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Makla</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Direct des APIs - Makla</h1>
+        <p>Ce fichier HTML teste directement les APIs backend sans passer par Angular.</p>
+
+        <h2>Tests Backend Services</h2>
+        <button onclick="testEureka()">Test Eureka (8761)</button>
+        <button onclick="testGateway()">Test Gateway Health (8080)</button>
+        <button onclick="testConfigServer()">Test Config Server (8888)</button>
+
+        <h2>Tests API Endpoints (Direct)</h2>
+        <button onclick="testFoodServiceDirect()">Test Food Service Direct (8083)</button>
+        <button onclick="testMealServiceDirect()">Test Meal Service Direct (8084)</button>
+        <button onclick="testWaterServiceDirect()">Test Water Service Direct (8085)</button>
+
+        <h2>Tests API Endpoints (via Gateway)</h2>
+        <button onclick="testFoodViaGateway()">Test GET /api/foods</button>
+        <button onclick="testMealViaGateway()">Test GET /api/meals</button>
+        <button onclick="testWaterViaGateway()">Test GET /api/water</button>
+
+        <h2>Test POST (Créer un aliment)</h2>
+        <button onclick="testCreateFood()">POST /api/foods (Créer Pomme)</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function showResult(title, data, success = true) {
+            const resultDiv = document.getElementById('result');
+            const className = success ? 'success' : 'error';
+            resultDiv.innerHTML = `
+                <div class="result ${className}">
+                    <h3>${title}</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+
+        function showError(title, error) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="result error">
+                    <h3>❌ ${title}</h3>
+                    <pre>${error.toString()}</pre>
+                </div>
+            `;
+        }
+
+        async function testEureka() {
+            try {
+                const response = await fetch('http://localhost:8761/eureka/apps', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                showResult('✅ Eureka Server', {
+                    status: response.status,
+                    applications: data.applications?.application?.length || 0
+                });
+            } catch (error) {
+                showError('Eureka Server', error);
+            }
+        }
+
+        async function testGateway() {
+            try {
+                const response = await fetch('http://localhost:8080/actuator/health');
+                const data = await response.json();
+                showResult('✅ API Gateway Health', data);
+            } catch (error) {
+                showError('API Gateway Health', error);
+            }
+        }
+
+        async function testConfigServer() {
+            try {
+                const response = await fetch('http://localhost:8888/actuator/health');
+                const data = await response.json();
+                showResult('✅ Config Server Health', data);
+            } catch (error) {
+                showError('Config Server Health', error);
+            }
+        }
+
+        async function testFoodServiceDirect() {
+            try {
+                const response = await fetch('http://localhost:8083/api/foods');
+                const data = await response.json();
+                showResult('✅ Food Service Direct (8083)', {
+                    status: response.status,
+                    count: data.length,
+                    data: data
+                });
+            } catch (error) {
+                showError('Food Service Direct', error);
+            }
+        }
+
+        async function testMealServiceDirect() {
+            try {
+                const response = await fetch('http://localhost:8084/api/meals');
+                const data = await response.json();
+                showResult('✅ Meal Service Direct (8084)', {
+                    status: response.status,
+                    count: data.length,
+                    data: data
+                });
+            } catch (error) {
+                showError('Meal Service Direct', error);
+            }
+        }
+
+        async function testWaterServiceDirect() {
+            try {
+                const response = await fetch('http://localhost:8085/api/water');
+                const data = await response.json();
+                showResult('✅ Water Service Direct (8085)', {
+                    status: response.status,
+                    count: data.length,
+                    data: data
+                });
+            } catch (error) {
+                showError('Water Service Direct', error);
+            }
+        }
+
+        async function testFoodViaGateway() {
+            try {
+                const response = await fetch('http://localhost:8080/api/foods');
+                const data = await response.json();
+                showResult('✅ GET /api/foods (via Gateway)', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    count: data.length,
+                    data: data
+                });
+            } catch (error) {
+                showError('GET /api/foods (via Gateway)', error);
+            }
+        }
+
+        async function testMealViaGateway() {
+            try {
+                const response = await fetch('http://localhost:8080/api/meals');
+                const data = await response.json();
+                showResult('✅ GET /api/meals (via Gateway)', {
+                    status: response.status,
+                    count: data.length,
+                    data: data
+                });
+            } catch (error) {
+                showError('GET /api/meals (via Gateway)', error);
+            }
+        }
+
+        async function testWaterViaGateway() {
+            try {
+                const response = await fetch('http://localhost:8080/api/water');
+                const data = await response.json();
+                showResult('✅ GET /api/water (via Gateway)', {
+                    status: response.status,
+                    count: data.length,
+                    data: data
+                });
+            } catch (error) {
+                showError('GET /api/water (via Gateway)', error);
+            }
+        }
+
+        async function testCreateFood() {
+            try {
+                const newFood = {
+                    name: 'Pomme',
+                    calories: 52,
+                    proteins: 0.3,
+                    carbs: 14,
+                    fats: 0.2,
+                    fiber: 2.4,
+                    category: 'Fruits'
+                };
+
+                const response = await fetch('http://localhost:8080/api/foods', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newFood)
+                });
+
+                const data = await response.json();
+                showResult('✅ POST /api/foods (Création)', {
+                    status: response.status,
+                    created: data
+                });
+            } catch (error) {
+                showError('POST /api/foods', error);
+            }
+        }
+
+        // Test automatique au chargement
+        window.onload = function() {
+            console.log('Page de test chargée. Utilisez les boutons pour tester les APIs.');
+        };
+    </script>
+</body>
+</html>
+

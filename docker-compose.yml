@@ -1,0 +1,106 @@
+services:
+  eureka:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: makla-eureka
+    ports: ["8761:8761"]
+    networks: [makla]
+    restart: unless-stopped
+
+  config:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    container_name: makla-config
+    ports: ["8888:8888"]
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+    networks: [makla]
+    restart: unless-stopped
+
+  auth:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: makla-auth
+    ports: ["8081:8081"]
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+    networks: [makla]
+    restart: unless-stopped
+
+  user:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: makla-user
+    ports: ["8082:8082"]
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+    networks: [makla]
+    restart: unless-stopped
+
+  food:
+    build:
+      context: ./food-service
+      dockerfile: Dockerfile
+    container_name: makla-food
+    ports: ["8083:8083"]
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+    networks: [makla]
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: makla-gateway
+    ports: ["8080:8080"]
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+    networks: [makla]
+    restart: unless-stopped
+
+  meal:
+    build:
+      context: ./meal-service
+      dockerfile: Dockerfile
+    container_name: makla-meal
+    ports: ["8084:8084"]
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+    networks: [makla]
+    restart: unless-stopped
+
+  water:
+    build:
+      context: ./water-service
+      dockerfile: Dockerfile
+    container_name: makla-water
+    ports: ["8085:8085"]
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka:8761/eureka/
+    depends_on:
+      - eureka
+    networks: [makla]
+    restart: unless-stopped
+
+networks:
+  makla:
+    driver: bridge
+
+
