@@ -1,0 +1,230 @@
+<div class="enhanced-dashboard">
+  <!-- Smart Header -->
+  <header class="smart-header">
+    <div class="header-left">
+      <h1>🍎 Makla</h1>
+      <span class="ai-badge" [class.active]="!aiLoading">
+        <span class="pulse-dot"></span>
+        AI Active
+      </span>
+    </div>
+    <div class="header-center">
+      <h2>{{ getGreeting() }}, <strong>{{ username }}</strong>!</h2>
+      <p class="date">{{ currentDate | date:'fullDate' }}</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" *ngIf="isDiabetic" title="Diabetic Mode Active">
+        🩺
+      </button>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+  </header>
+
+  <!-- AI Quick Insight Banner -->
+  <div class="ai-insight-banner" *ngIf="quickInsight && !aiLoading">
+    <div class="insight-content">
+      <span class="insight-icon">💡</span>
+      <div class="insight-text">
+        <strong>{{ quickInsight.topAlert }}</strong>
+        <p>{{ quickInsight.quickTip }}</p>
+      </div>
+      <div class="health-score-mini" [style.background]="getProgressColor(healthScore)">
+        {{ healthScore }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Diabetic Alerts -->
+  <div class="alerts-container" *ngIf="alerts.length > 0">
+    <div *ngFor="let alert of alerts" class="alert" [class]="'alert-' + alert.type">
+      <span class="alert-icon">
+        {{ alert.type === 'danger' ? '🚨' : alert.type === 'warning' ? '⚠️' : 'ℹ️' }}
+      </span>
+      <div class="alert-content">
+        <strong>{{ alert.title }}</strong>
+        <p>{{ alert.message }}</p>
+      </div>
+      <button class="alert-dismiss" (click)="dismissAlert(alert)">✕</button>
+    </div>
+  </div>
+
+  <!-- Main Stats Grid -->
+  <div class="stats-grid">
+    <!-- Calories Card -->
+    <div class="stat-card calories">
+      <div class="card-header">
+        <h3>🔥 Calories</h3>
+        <span class="stat-value">{{ todayCalories }} / {{ caloriesGoal }}</span>
+      </div>
+      <div class="progress-ring">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" class="ring-bg"></circle>
+          <circle cx="50" cy="50" r="45" class="ring-progress"
+                  [style.strokeDasharray]="getProgressPercent(todayCalories, caloriesGoal) + ' 100'"></circle>
+        </svg>
+        <div class="ring-center">
+          <span class="percent">{{ getProgressPercent(todayCalories, caloriesGoal) }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carbs Card (Prominent for Diabetics) -->
+    <div class="stat-card carbs" [class.diabetic]="isDiabetic" [class]="'status-' + getCarbsStatus()">
+      <div class="card-header">
+        <h3>🍞 Carbs {{ isDiabetic ? '(Monitor)' : '' }}</h3>
+        <span class="stat-value">{{ todayCarbs }}g / {{ carbsGoal }}g</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar">
+          <div class="progress-fill"
+               [style.width.%]="getProgressPercent(todayCarbs, carbsGoal)"
+               [style.background]="getProgressColor(getProgressPercent(todayCarbs, carbsGoal))"></div>
+        </div>
+        <span class="progress-label">{{ getProgressPercent(todayCarbs, carbsGoal) }}%</span>
+      </div>
+      <button *ngIf="isDiabetic && todayCarbs > 100"
+              class="quick-action-btn warning"
+              (click)="getDiabeticMeals()">
+        🍽️ Get Low-Carb Meals
+      </button>
+    </div>
+
+    <!-- Water Card -->
+    <div class="stat-card water">
+      <div class="card-header">
+        <h3>💧 Water</h3>
+        <span class="stat-value">{{ todayWater }} / {{ waterGoal }} ml</span>
+      </div>
+      <div class="water-visual">
+        <div class="water-glass">
+          <div class="water-fill" [style.height.%]="getProgressPercent(todayWater, waterGoal)"></div>
+        </div>
+        <span class="water-percent">{{ getProgressPercent(todayWater, waterGoal) }}%</span>
+      </div>
+      <button class="quick-action-btn primary" (click)="quickAddWater()">
+        + 250ml
+      </button>
+    </div>
+
+    <!-- Meals Card -->
+    <div class="stat-card meals">
+      <div class="card-header">
+        <h3>🍽️ Meals</h3>
+        <span class="stat-value">{{ mealsCount }} today</span>
+      </div>
+      <div class="meals-visual">
+        <div class="meal-slot" [class.filled]="mealsCount >= 1">🌅</div>
+        <div class="meal-slot" [class.filled]="mealsCount >= 2">☀️</div>
+        <div class="meal-slot" [class.filled]="mealsCount >= 3">🌙</div>
+      </div>
+      <button class="quick-action-btn primary" (click)="toggleQuickAddMeal()">
+        + Quick Add
+      </button>
+    </div>
+
+    <!-- Protein Card -->
+    <div class="stat-card protein">
+      <div class="card-header">
+        <h3>💪 Protein</h3>
+        <span class="stat-value">{{ todayProtein }}g / {{ proteinGoal }}g</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar">
+          <div class="progress-fill protein-fill"
+               [style.width.%]="getProgressPercent(todayProtein, proteinGoal)"></div>
+        </div>
+        <span class="progress-label">{{ getProgressPercent(todayProtein, proteinGoal) }}%</span>
+      </div>
+    </div>
+
+    <!-- Health Score Card -->
+    <div class="stat-card health-score">
+      <div class="card-header">
+        <h3>❤️ Health Score</h3>
+      </div>
+      <div class="score-display">
+        <div class="score-circle" [style.background]="getProgressColor(healthScore)">
+          <span class="score-value">{{ healthScore }}</span>
+          <span class="score-max">/100</span>
+        </div>
+        <p class="score-label">
+          {{ healthScore >= 80 ? 'Excellent!' : healthScore >= 60 ? 'Good' : 'Needs Attention' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Add Meal Modal -->
+  <div class="quick-add-modal" *ngIf="showQuickAddMeal" (click)="showQuickAddMeal = false">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>🤖 Quick Add Meal with AI</h3>
+        <button class="close-btn" (click)="showQuickAddMeal = false">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="hint">Describe your meal naturally, AI will estimate nutrition:</p>
+        <input type="text"
+               [(ngModel)]="quickMealInput"
+               placeholder="e.g., 'I ate a chicken sandwich with salad'"
+               class="meal-input"
+               (keyup.enter)="quickAddMeal()"
+               [disabled]="quickMealProcessing">
+        <div class="examples">
+          <small>Examples: "2 eggs and toast", "grilled salmon with vegetables", "protein shake"</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="showQuickAddMeal = false" [disabled]="quickMealProcessing">
+          Cancel
+        </button>
+        <button class="btn-primary" (click)="quickAddMeal()" [disabled]="!quickMealInput.trim() || quickMealProcessing">
+          <span *ngIf="!quickMealProcessing">🤖 AI Analyze & Log</span>
+          <span *ngIf="quickMealProcessing">
+            <span class="spinner-small"></span> Processing...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today's Meals List -->
+  <div class="today-meals-section" *ngIf="todayMeals.length > 0">
+    <h3>🍽️ Today's Meals</h3>
+    <div class="meals-list">
+      <div class="meal-item" *ngFor="let meal of todayMeals">
+        <div class="meal-name">{{ meal.name }}</div>
+        <div class="meal-nutrition">
+          <span>{{ meal.calories || 0 }} cal</span>
+          <span>{{ meal.carbs || 0 }}g carbs</span>
+          <span>{{ meal.protein || 0 }}g protein</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Navigation -->
+  <div class="quick-nav">
+    <button routerLink="/meals" class="nav-card">
+      <span class="nav-icon">🍽️</span>
+      <span class="nav-label">All Meals</span>
+    </button>
+    <button routerLink="/foods" class="nav-card">
+      <span class="nav-icon">🍎</span>
+      <span class="nav-label">Foods</span>
+    </button>
+    <button routerLink="/water" class="nav-card">
+      <span class="nav-icon">💧</span>
+      <span class="nav-label">Water Log</span>
+    </button>
+    <button routerLink="/diagnostic" class="nav-card">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label">Reports</span>
+    </button>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="aiLoading">
+    <div class="spinner"></div>
+    <p>AI is analyzing your data...</p>
+  </div>
+</div>

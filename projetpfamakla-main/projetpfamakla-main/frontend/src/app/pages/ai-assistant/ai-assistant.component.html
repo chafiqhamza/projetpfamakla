@@ -1,0 +1,107 @@
+<div class="ai-assistant-page">
+  <div class="assistant-container">
+    <!-- Header -->
+    <header class="assistant-header">
+      <div class="header-left">
+        <button routerLink="/dashboard" class="back-btn">← Back</button>
+        <h1>🤖 AI Nutrition Assistant</h1>
+      </div>
+      <div class="header-right">
+        <span class="status-badge active">AI Online</span>
+        <button class="clear-btn" (click)="clearChat()">🗑️ Clear</button>
+      </div>
+    </header>
+
+    <!-- Today's Stats Bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-icon">🔥</span>
+        <span class="stat-value">{{ todayStats.calories }}</span>
+        <span class="stat-label">cal</span>
+      </div>
+      <div class="stat-item" [class.warning]="isDiabetic && todayStats.carbs > 100">
+        <span class="stat-icon">🍞</span>
+        <span class="stat-value">{{ todayStats.carbs }}</span>
+        <span class="stat-label">carbs</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon">💪</span>
+        <span class="stat-value">{{ todayStats.protein }}</span>
+        <span class="stat-label">protein</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon">💧</span>
+        <span class="stat-value">{{ todayStats.water }}</span>
+        <span class="stat-label">ml</span>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-bar">
+      <button *ngFor="let action of quickActions"
+              class="quick-action-btn"
+              (click)="handleQuickAction(action.action)">
+        <span class="action-icon">{{ action.icon }}</span>
+        <span class="action-label">{{ action.label }}</span>
+      </button>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-messages" #chatContainer>
+      <div *ngFor="let message of messages"
+           class="message"
+           [class.user-message]="message.role === 'user'"
+           [class.assistant-message]="message.role === 'assistant'">
+        <div class="message-avatar">
+          {{ message.role === 'user' ? '👤' : '🤖' }}
+        </div>
+        <div class="message-content">
+          <div class="message-text" [innerHTML]="formatMessage(message.content)"></div>
+          <span class="message-time">{{ message.timestamp | date:'short' }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="isProcessing" class="message assistant-message processing">
+        <div class="message-avatar">🤖</div>
+        <div class="message-content">
+          <div class="typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-container">
+      <div class="input-wrapper">
+        <input type="text"
+               [(ngModel)]="userInput"
+               (keyup.enter)="sendMessage()"
+               placeholder="Ask me anything... e.g., 'I ate a chicken salad' or 'Suggest low-carb meals'"
+               class="chat-input"
+               [disabled]="isProcessing">
+
+        <button class="voice-btn"
+                [class.listening]="isListening"
+                (click)="toggleVoiceInput()"
+                [disabled]="isProcessing"
+                title="Voice input">
+          <span *ngIf="!isListening">🎤</span>
+          <span *ngIf="isListening" class="pulse">🎤</span>
+        </button>
+
+        <button class="send-btn"
+                (click)="sendMessage()"
+                [disabled]="!userInput.trim() || isProcessing">
+          <span *ngIf="!isProcessing">➤</span>
+          <span *ngIf="isProcessing" class="spinner-small"></span>
+        </button>
+      </div>
+
+      <div class="input-hints">
+        💡 Try: "I ate pizza", "How am I doing?", "Suggest dinner", "Add water"
+      </div>
+    </div>
+  </div>
+</div>
+

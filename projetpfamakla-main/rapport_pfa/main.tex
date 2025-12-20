@@ -1,0 +1,34 @@
+\input{config}
+
+\begin{document}
+
+% Pas de numéro de page sur la page de garde
+\pagenumbering{gobble}
+\input{page_de_garde}
+
+% Résumé et Dédicaces (numérotation romaine)
+\pagenumbering{roman}
+\input{resume}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
+% Contenu principal (numérotation arabe)
+\pagenumbering{arabic}
+
+\input{chapitres/01_introduction}
+\input{chapitres/02_etat_de_l_art}
+\input{chapitres/03_conception}
+\input{chapitres/04_realisation}
+\input{chapitres/05_conclusion}
+
+% Bibliographie
+\printbibliography[heading=bibintoc]
+
+% Annexes
+\appendix
+%\input{annexes/annexe_a}
+
+\end{document}

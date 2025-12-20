@@ -1,0 +1,14 @@
+﻿{
+    "quickTip":  "Focus on protein and vegetables for stable blood sugar",
+    "carbsWarning":  "Carb intake is very high - monitor blood glucose closely",
+    "topAlert":  "â ï¸ Carb intake exceeded daily limit",
+    "success":  true,
+    "aiSummary":  "```json\n{\n   \"healthScore\":7,\n   \"topAlert\":\"ConsidÃ©rer votre consommation en glucides par rapport Ã  vos objectifs glycÃ©miques.\",\n   \"quickTip\":\"Incorporez des protÃ©ines maigres et une source de fibre pour chaque repas.\" , \n   \"recommendations\":[\n      {\n         \"mealTime\":\"Dinner\",\n         \"foods\":[\"Saumon grillÃ©\", \"Brocoli\", \"Quinoa (1/2 tasse)\"],\n         \"caloriesGoalRange\":500,\n         \"carbsLimit\":40\n      },\n       {\n         \"mealTime\":\"Dinner Alternative 2\",\n         \"foods\":[\"Poulet au curry\", \"LÃ©gumes variÃÂ©s\", \"Riz brun (1/2 tasse)\"],\n         \"caloriesGoalRange\":500,\n         \"carbsLimit\":40\n      },\n       {\n         \"mealTime\":\"Dinner Alternative 3\",\noptionally include if providing alternatives for diversity in dietary patterns.\n        \"foods\":[\"Stir-fry de tofu\", \"LÃ©gumes assaisonnÃÂ©s\", \"Nouilles de konjac\"],\n         \"caloriesGoalRange\":500,\n         \"carbsLimit\":40\n      }\n   ],\n   \"recommendedWater\":2600, // Assuming an increase to meet the daily water goal. \n   \"carbsWarning\":\"Votre consommation actuelle de glucides est supÃ©rieure aux objectifs recommandÃÂ©s pour votre diabÃ¨te.\"\n}\n```\nNote : Health score is subjective and for this user, I\u0027m assuming a baseline of healthy habits with room for improvement in nutritional balance. The water goal has been slightly increased to encourage hydration without exceeding the daily limit significantly.",
+    "recommendedWater":  2000,
+    "waterDeficit":  0,
+    "healthScore":  75,
+    "recommendations":  [
+                            "🥦 Focus on vegetables for remaining meals",
+                            "🚶ââï¸ Take a 10-minute walk after your next meal"
+                        ]
+}
