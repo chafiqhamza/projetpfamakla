@@ -1,0 +1,232 @@
+<div class="settings-page">
+  <div class="settings-container">
+    <!-- Header -->
+    <header class="settings-header">
+      <button routerLink="/dashboard" class="back-btn">← Back to Dashboard</button>
+      <h1>⚙️ Settings & Preferences</h1>
+      <button class="save-btn" (click)="savePreferences()">💾 Save Changes</button>
+    </header>
+
+    <div class="success-message" *ngIf="savedMessage">
+      ✅ Settings saved successfully!
+    </div>
+
+    <div class="ai-confirmation" *ngIf="aiProfileSent">
+      <div class="ai-confirmation-inner">
+        <span class="ai-check">🤖</span>
+        <div class="ai-text">
+          <div class="ai-title">Profile sent to AI (Phi3)</div>
+          <div class="ai-sub">Last sent: {{ aiProfileSentAt | date:'short' }}</div>
+        </div>
+        <button class="ai-resend" (click)="resendProfileToAI()">Resend to AI</button>
+      </div>
+    </div>
+
+    <div class="settings-content">
+      <!-- Profile Section -->
+      <section class="settings-section">
+        <h2>👤 Your Profile</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" [(ngModel)]="age" min="10" max="120" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" [(ngModel)]="weight" min="20" max="300" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Height (cm)</label>
+            <input type="number" [(ngModel)]="height" min="100" max="250" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select [(ngModel)]="gender" class="form-select">
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bmi-card">
+          <div class="bmi-info">
+            <span class="bmi-label">Your BMI:</span>
+            <span class="bmi-value">{{ getBMI() | number:'1.1-1' }}</span>
+            <span class="bmi-category" [class]="'category-' + getBMICategory().toLowerCase()">
+              {{ getBMICategory() }}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity & Goals -->
+      <section class="settings-section">
+        <h2>🎯 Activity & Goals</h2>
+
+        <div class="form-group">
+          <label>Activity Level</label>
+          <select [(ngModel)]="selectedActivity" class="form-select">
+            <option *ngFor="let level of activityLevels" [value]="level.value">
+              {{ level.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Your Goal</label>
+          <div class="goal-selector">
+            <button class="goal-btn" [class.active]="goalType === 'lose'" (click)="goalType = 'lose'">
+              📉 Lose Weight
+            </button>
+            <button class="goal-btn" [class.active]="goalType === 'maintain'" (click)="goalType = 'maintain'">
+              ⚖️ Maintain
+            </button>
+            <button class="goal-btn" [class.active]="goalType === 'gain'" (click)="goalType = 'gain'">
+              📈 Gain Weight
+            </button>
+          </div>
+        </div>
+
+        <button class="calculate-btn" (click)="calculateRecommendedGoals()">
+          🧮 Calculate Recommended Goals
+        </button>
+      </section>
+
+      <!-- Health Conditions -->
+      <section class="settings-section">
+        <h2>🩺 Health Conditions</h2>
+        <p class="section-description">Select any conditions that apply to you for personalized recommendations</p>
+
+        <div class="chip-grid">
+          <button *ngFor="let condition of healthConditionOptions"
+                  class="chip"
+                  [class.selected]="preferences.healthConditions.includes(condition)"
+                  (click)="toggleHealthCondition(condition)">
+            {{ condition }}
+          </button>
+        </div>
+
+        <div class="diabetic-warning" *ngIf="preferences.isDiabetic">
+          <span class="warning-icon">⚠️</span>
+          <div class="warning-content">
+            <strong>Diabetic Mode Enabled</strong>
+            <p>AI will focus on carb tracking and provide low-carb meal suggestions. Daily carb goal: {{ preferences.goals.carbs }}g</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dietary Preferences -->
+      <section class="settings-section">
+        <h2>🍽️ Dietary Preferences</h2>
+        <p class="section-description">Your dietary restrictions and preferences</p>
+
+        <div class="chip-grid">
+          <button *ngFor="let diet of dietOptions"
+                  class="chip"
+                  [class.selected]="preferences.dietaryRestrictions.includes(diet)"
+                  (click)="toggleDietRestriction(diet)">
+            {{ diet }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Daily Goals -->
+      <section class="settings-section">
+        <h2>📊 Daily Nutrition Goals</h2>
+
+        <div class="goals-grid">
+          <div class="goal-card">
+            <span class="goal-icon">🔥</span>
+            <label>Calories</label>
+            <input type="number" [(ngModel)]="preferences.goals.calories" min="1000" max="5000" class="goal-input">
+            <span class="goal-unit">kcal</span>
+          </div>
+
+          <div class="goal-card" [class.highlight]="preferences.isDiabetic">
+            <span class="goal-icon">🍞</span>
+            <label>Carbs {{ preferences.isDiabetic ? '(Critical)' : '' }}</label>
+            <input type="number" [(ngModel)]="preferences.goals.carbs" min="20" max="400" class="goal-input">
+            <span class="goal-unit">g</span>
+          </div>
+
+          <div class="goal-card">
+            <span class="goal-icon">💪</span>
+            <label>Protein</label>
+            <input type="number" [(ngModel)]="preferences.goals.protein" min="20" max="300" class="goal-input">
+            <span class="goal-unit">g</span>
+          </div>
+
+          <div class="goal-card">
+            <span class="goal-icon">🥑</span>
+            <label>Fats</label>
+            <input type="number" [(ngModel)]="preferences.goals.fats" min="20" max="200" class="goal-input">
+            <span class="goal-unit">g</span>
+          </div>
+
+          <div class="goal-card">
+            <span class="goal-icon">💧</span>
+            <label>Water</label>
+            <input type="number" [(ngModel)]="preferences.goals.water" min="1000" max="5000" step="100" class="goal-input">
+            <span class="goal-unit">ml</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Notifications -->
+      <section class="settings-section">
+        <h2>🔔 Notifications</h2>
+
+        <div class="notification-options">
+          <label class="toggle-option">
+            <input type="checkbox" [(ngModel)]="preferences.notifications.waterReminders">
+            <span class="toggle-label">
+              <strong>Water Reminders</strong>
+              <small>Get reminded to stay hydrated throughout the day</small>
+            </span>
+          </label>
+
+          <label class="toggle-option">
+            <input type="checkbox" [(ngModel)]="preferences.notifications.mealReminders">
+            <span class="toggle-label">
+              <strong>Meal Reminders</strong>
+              <small>Reminders to log your meals</small>
+            </span>
+          </label>
+
+          <label class="toggle-option" *ngIf="preferences.isDiabetic">
+            <input type="checkbox" [(ngModel)]="preferences.notifications.carbAlerts">
+            <span class="toggle-label">
+              <strong>Carb Alerts</strong>
+              <small>Get warned when approaching carb limits</small>
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Data Management -->
+      <section class="settings-section">
+        <h2>💾 Data Management</h2>
+
+        <div class="data-actions">
+          <button class="action-btn export" (click)="exportData()">
+            📤 Export Settings
+          </button>
+          <label class="action-btn import">
+            📥 Import Settings
+            <input type="file" accept=".json" (change)="importData($event)" style="display: none;">
+          </label>
+          <button class="action-btn reset" (click)="resetToDefaults()">
+            🔄 Reset to Defaults
+          </button>
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="settings-footer">
+        <button class="btn-cancel" routerLink="/dashboard">Cancel</button>
+        <button class="btn-save" (click)="savePreferences()">💾 Save All Changes</button>
+      </div>
+    </div>
+  </div>
+</div>

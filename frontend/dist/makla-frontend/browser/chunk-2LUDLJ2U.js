@@ -1,0 +1,1 @@
+var a={production:!1,apiUrl:"/api",mealServiceUrl:"/api/meals",waterServiceUrl:"/api/water",gatewayUrl:"http://localhost:8080/api",gatewayMealUrl:"http://localhost:8080/api/meals",gatewayWaterUrl:"http://localhost:8080/api/water",aiServiceUrl:"/api",aiServiceFallback:!0,enableLocalAI:!0};export{a};

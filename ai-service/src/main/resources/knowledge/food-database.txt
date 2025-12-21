@@ -1,0 +1,144 @@
+BASE DE DONNÉES ALIMENTAIRE - Informations Nutritionnelles
+
+Format: Aliment | Portion | Calories | Protéines(g) | Glucides(g) | Lipides(g) | Fibres(g) | Index Glycémique
+
+# Protéines Animales
+
+Poulet grillé (poitrine) | 150g | 165 | 31 | 0 | 3.6 | 0 | Bas
+Poulet avec peau | 150g | 240 | 27 | 0 | 14 | 0 | Bas
+Dinde (blanc) | 150g | 135 | 30 | 0 | 1 | 0 | Bas
+Bœuf maigre (5% gras) | 150g | 250 | 26 | 0 | 15 | 0 | Bas
+Bœuf haché (15% gras) | 150g | 310 | 24 | 0 | 23 | 0 | Bas
+Saumon atlantique | 150g | 280 | 39 | 0 | 13 | 0 | Bas
+Thon en conserve (eau) | 150g | 180 | 40 | 0 | 1.2 | 0 | Bas
+Maquereau | 150g | 305 | 28 | 0 | 21 | 0 | Bas
+Sardines | 150g | 290 | 35 | 0 | 16 | 0 | Bas
+Œufs (2 gros) | 100g | 140 | 12 | 1 | 10 | 0 | Bas
+Crevettes | 150g | 150 | 31 | 1 | 2 | 0 | Bas
+
+# Protéines Végétales
+
+Lentilles vertes cuites | 200g | 230 | 18 | 40 | 0.8 | 16 | Bas (29)
+Lentilles rouges cuites | 200g | 220 | 16 | 39 | 0.7 | 8 | Bas (26)
+Pois chiches cuits | 200g | 270 | 14 | 45 | 4 | 12 | Bas (28)
+Haricots noirs cuits | 200g | 240 | 15 | 41 | 0.9 | 15 | Bas (30)
+Haricots rouges cuits | 200g | 225 | 15 | 40 | 0.9 | 13 | Bas (24)
+Tofu ferme | 150g | 145 | 17 | 4 | 9 | 2 | Bas
+Tempeh | 100g | 195 | 20 | 9 | 11 | 0 | Bas
+Edamame | 150g | 190 | 17 | 15 | 8 | 8 | Bas
+
+# Céréales et Grains
+
+Quinoa cuit | 185g | 222 | 8 | 39 | 3.6 | 5 | Bas (53)
+Riz brun cuit | 195g | 215 | 5 | 45 | 1.8 | 3.5 | Moyen (68)
+Riz blanc cuit | 158g | 205 | 4.3 | 45 | 0.4 | 0.6 | Élevé (73)
+Avoine (flocons) crue | 80g | 300 | 11 | 54 | 5.4 | 8 | Bas (55)
+Pain complet | 30g (1 tranche) | 80 | 4 | 14 | 1 | 2 | Moyen (69)
+Pain blanc | 30g (1 tranche) | 75 | 2.5 | 14 | 1 | 0.8 | Élevé (75)
+Pâtes complètes cuites | 140g | 175 | 7.5 | 37 | 1.4 | 6 | Moyen (50)
+Pâtes blanches cuites | 140g | 220 | 8 | 43 | 1.3 | 2.5 | Élevé (65)
+Couscous cuit | 157g | 176 | 6 | 36 | 0.3 | 2.2 | Moyen (65)
+Orge perlé cuit | 157g | 193 | 3.5 | 44 | 0.7 | 6 | Bas (28)
+
+# Légumes (100g)
+
+Épinards crus | 100g | 23 | 2.9 | 3.6 | 0.4 | 2.2 | Bas
+Brocoli cuit | 100g | 35 | 2.4 | 7 | 0.4 | 2.6 | Bas
+Chou kale | 100g | 35 | 2.9 | 4.4 | 1.5 | 4.1 | Bas
+Carottes crues | 100g | 41 | 0.9 | 10 | 0.2 | 2.8 | Moyen (39)
+Tomates | 100g | 18 | 0.9 | 3.9 | 0.2 | 1.2 | Bas
+Concombre | 100g | 15 | 0.7 | 3.6 | 0.1 | 0.5 | Bas
+Poivrons rouges | 100g | 31 | 1 | 6 | 0.3 | 2.1 | Bas
+Courgettes | 100g | 17 | 1.2 | 3.1 | 0.3 | 1 | Bas
+Aubergine | 100g | 25 | 1 | 6 | 0.2 | 3 | Bas
+Chou-fleur | 100g | 25 | 2 | 5 | 0.3 | 2 | Bas
+Asperges | 100g | 20 | 2.2 | 3.9 | 0.1 | 2.1 | Bas
+Champignons | 100g | 22 | 3.1 | 3.3 | 0.3 | 1 | Bas
+Oignons | 100g | 40 | 1.1 | 9.3 | 0.1 | 1.7 | Bas
+Ail | 10g | 15 | 0.6 | 3.3 | 0.05 | 0.2 | Bas
+Pommes de terre bouillies | 100g | 86 | 2 | 20 | 0.1 | 1.8 | Moyen (56)
+Patates douces | 100g | 86 | 1.6 | 20 | 0.1 | 3 | Moyen (63)
+
+# Fruits (100g)
+
+Pommes | 100g | 52 | 0.3 | 14 | 0.2 | 2.4 | Bas (36)
+Bananes | 100g | 89 | 1.1 | 23 | 0.3 | 2.6 | Moyen (51)
+Oranges | 100g | 47 | 0.9 | 12 | 0.1 | 2.4 | Bas (43)
+Fraises | 100g | 32 | 0.7 | 7.7 | 0.3 | 2 | Bas (40)
+Myrtilles | 100g | 57 | 0.7 | 14 | 0.3 | 2.4 | Bas (53)
+Framboises | 100g | 52 | 1.2 | 12 | 0.7 | 6.5 | Bas
+Raisins | 100g | 69 | 0.7 | 18 | 0.2 | 0.9 | Moyen (59)
+Poires | 100g | 57 | 0.4 | 15 | 0.1 | 3.1 | Bas (38)
+Pêches | 100g | 39 | 0.9 | 10 | 0.3 | 1.5 | Bas (42)
+Kiwis | 100g | 61 | 1.1 | 15 | 0.5 | 3 | Bas (53)
+Mangue | 100g | 60 | 0.8 | 15 | 0.4 | 1.6 | Moyen (51)
+Ananas | 100g | 50 | 0.5 | 13 | 0.1 | 1.4 | Moyen (59)
+Melon | 100g | 34 | 0.8 | 8 | 0.2 | 0.9 | Moyen (65)
+Pastèque | 100g | 30 | 0.6 | 7.6 | 0.2 | 0.4 | Élevé (72)
+
+# Produits Laitiers
+
+Lait écrémé | 250ml | 90 | 9 | 13 | 0.5 | 0 | Bas (32)
+Lait 2% | 250ml | 130 | 8 | 12 | 5 | 0 | Bas (32)
+Lait entier | 250ml | 150 | 8 | 12 | 8 | 0 | Bas (39)
+Yaourt grec nature 0% | 170g | 100 | 17 | 6 | 0.7 | 0 | Bas
+Yaourt nature entier | 170g | 150 | 8 | 11 | 8 | 0 | Bas
+Fromage cottage faible gras | 100g | 85 | 12 | 4 | 1.5 | 0 | Bas
+Fromage cheddar | 30g | 115 | 7 | 0.4 | 9.5 | 0 | Bas
+Mozzarella part-écrémé | 30g | 75 | 7 | 1 | 5 | 0 | Bas
+Fromage feta | 30g | 75 | 4 | 1.2 | 6 | 0 | Bas
+
+# Noix et Graines (30g)
+
+Amandes | 30g | 170 | 6 | 6 | 15 | 3.5 | Bas
+Noix de Grenoble | 30g | 185 | 4.3 | 4 | 18.5 | 2 | Bas
+Cajou | 30g | 155 | 5 | 9 | 12 | 1 | Bas (25)
+Pistaches | 30g | 160 | 6 | 8 | 13 | 3 | Bas
+Noix de pécan | 30g | 195 | 2.6 | 4 | 20 | 2.7 | Bas
+Arachides | 30g | 165 | 7 | 6 | 14 | 2.4 | Bas
+Graines de chia | 30g | 145 | 5 | 12 | 9 | 10 | Bas
+Graines de lin | 30g | 160 | 5.5 | 9 | 12.5 | 8 | Bas
+Graines de tournesol | 30g | 165 | 6 | 7 | 14 | 3 | Bas
+Graines de citrouille | 30g | 150 | 7 | 5 | 12 | 1.5 | Bas
+
+# Huiles et Graisses (15ml = 1 c. à soupe)
+
+Huile d'olive | 15ml | 120 | 0 | 0 | 14 | 0 | -
+Huile de coco | 15ml | 120 | 0 | 0 | 14 | 0 | -
+Huile d'avocat | 15ml | 120 | 0 | 0 | 14 | 0 | -
+Beurre | 15g | 100 | 0.1 | 0.1 | 11.5 | 0 | -
+Avocat | 100g | 160 | 2 | 9 | 15 | 7 | Bas
+Beurre d'amande | 30g | 190 | 7 | 6 | 18 | 3 | Bas
+Beurre d'arachide | 30g | 190 | 8 | 7 | 16 | 2 | Bas
+
+# Légumineuses Sèches (poids sec, à cuire)
+
+Lentilles sèches | 100g | 353 | 25 | 60 | 1.1 | 31 | Bas
+Pois chiches secs | 100g | 364 | 19 | 61 | 6 | 17 | Bas
+Haricots noirs secs | 100g | 341 | 21 | 62 | 1.4 | 15 | Bas
+Pois cassés | 100g | 341 | 25 | 60 | 1.2 | 25 | Bas
+
+# Substituts et Alternatives
+
+Lait d'amande non sucré | 250ml | 40 | 1 | 2 | 3 | 1 | Bas
+Lait de soja non sucré | 250ml | 80 | 7 | 4 | 4 | 1 | Bas
+Lait d'avoine | 250ml | 120 | 3 | 16 | 5 | 2 | Moyen
+Nouilles de konjac | 100g | 10 | 0 | 3 | 0 | 3 | Très Bas
+Riz de chou-fleur | 100g | 25 | 2 | 5 | 0.3 | 2 | Bas
+Spirales de courgettes | 100g | 20 | 1.5 | 3.5 | 0.4 | 1.1 | Bas
+
+# Condiments et Autres (par portion typique)
+
+Moutarde | 5g | 5 | 0.3 | 0.5 | 0.3 | 0.5 | -
+Sauce soja | 15ml | 10 | 1 | 1 | 0 | 0 | -
+Vinaigre balsamique | 15ml | 15 | 0 | 3 | 0 | 0 | -
+Houmous | 30g | 75 | 2 | 6 | 5 | 2 | Bas
+Salsa | 30g | 10 | 0.5 | 2 | 0 | 0.5 | Bas
+Guacamole | 30g | 50 | 0.6 | 3 | 4.5 | 2 | Bas
+
+Notes:
+- Les valeurs sont approximatives et peuvent varier selon la marque/préparation
+- IG (Index Glycémique): Bas (<55), Moyen (56-69), Élevé (≥70)
+- Les portions peuvent être ajustées selon les besoins individuels
+- Pour les diabétiques, privilégier les aliments à IG bas et moyen
+
